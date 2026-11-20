@@ -15,7 +15,7 @@ struct MyGymView: UIViewRepresentable {
                   let json = String(data: data, encoding: .utf8) else { return }
             DispatchQueue.main.async { web.evaluateJavaScript("window.mygymNativeBLE(\(json));", completionHandler: nil) }
         }
-        if let url = Bundle.main.url(forResource: "index", withExtension: "html", subdirectory: "Web") {
+        if let url = Bundle.main.url(forResource: "index", withExtension: "html") {
             web.loadFileURL(url, allowingReadAccessTo: url.deletingLastPathComponent())
         }
         return web
