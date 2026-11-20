@@ -36,8 +36,8 @@ workflows:
         script: |
           set -e
           xcodebuild -project MyGym.xcodeproj -scheme MyGym -configuration Release -sdk iphoneos -destination 'generic/platform=iOS' -derivedDataPath "$CM_BUILD_DIR/DerivedData" CODE_SIGNING_ALLOWED=NO build
-        - name: Проверить собранное приложение
-          script: |
+      - name: Проверить собранное приложение
+        script: |
             APP="$CM_BUILD_DIR/DerivedData/Build/Products/Release-iphoneos/MyGym.app"
             {
               echo "=== Info.plist ==="
