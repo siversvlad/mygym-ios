@@ -36,6 +36,17 @@ workflows:
         script: |
           set -e
           xcodebuild -project MyGym.xcodeproj -scheme MyGym -configuration Release -sdk iphoneos -destination 'generic/platform=iOS' -derivedDataPath "$CM_BUILD_DIR/DerivedData" CODE_SIGNING_ALLOWED=NO build
+        - name: Проверить собранное приложение
+          script: |
+            APP="$CM_BUILD_DIR/DerivedData/Build/Products/Release-iphoneos/MyGym.app"
+            {
+              echo "=== Info.plist ==="
+              plutil -p "$APP/Info.plist"
+              echo "=== Executable ==="
+              file "$APP/MyGym"
+              echo "=== App files ==="
+              ls -la "$APP"
+            } > /tmp/ipa-check.txt 2>&1     
       - name: Упаковать неподписанный IPA
         script: |
           set -e
@@ -45,4 +56,5 @@ workflows:
           zip -qr "$CM_BUILD_DIR/MyGym-unsigned.ipa" Payload
     artifacts:
       - MyGym-unsigned.ipa
+      - /tmp/ipa-check.txt
       - /tmp/xcodebuild_logs/*.log
