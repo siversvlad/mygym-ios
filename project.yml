@@ -1,0 +1,21 @@
+name: MyGym
+options:
+  bundleIdPrefix: ru.sivers
+settings:
+  base:
+    IPHONEOS_DEPLOYMENT_TARGET: '16.0'
+targets:
+  MyGym:
+    type: application
+    platform: iOS
+    sources:
+      - path: MyGym
+        excludes: ["Info.plist"]
+    info:
+      path: MyGym/Info.plist
+      properties:
+        CFBundleDisplayName: MyGym
+        CFBundleShortVersionString: '6.17'
+        CFBundleVersion: '1'
+        UILaunchScreen: {}
+        UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]

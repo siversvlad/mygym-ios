@@ -1,0 +1,477 @@
+<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>MyGym 6.16</title><link rel="manifest" href="./manifest.webmanifest"><meta name="theme-color" content="#17243a"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="apple-mobile-web-app-title" content="MyGym"><link rel="apple-touch-icon" href="./icon-192.png"><style>
+:root{font-family:system-ui,-apple-system,Arial,sans-serif;color:#17243a;background:#f4f6fa}*{box-sizing:border-box}body{margin:0}button,input,select{font:inherit}button{cursor:pointer;border:0;border-radius:12px;padding:11px 13px;background:#e8edf5;color:#17243a}button.primary{background:#2265e8;color:white}button.danger{background:#ffe9e8;color:#b42318}button.small{padding:7px 10px;font-size:13px}input,select{border:1px solid #d6deea;border-radius:10px;padding:10px;min-width:0;background:white;color:#17243a}main{max-width:760px;margin:auto;padding:18px 15px 95px}header{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px}h1{font-size:24px;margin:0}h2{font-size:20px;margin:8px 0 14px}h3{font-size:16px;margin:0 0 9px}.muted{color:#67768d;font-size:13px}.card{background:white;border:1px solid #e5eaf2;border-radius:17px;padding:16px;margin-bottom:13px;box-shadow:0 2px 10px #17243a07}.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.between{justify-content:space-between}.tabs{position:fixed;bottom:0;left:0;right:0;background:white;border-top:1px solid #e3e8ef;display:flex;justify-content:center;z-index:5;padding:8px 4px env(safe-area-inset-bottom)}.tabs button{background:transparent;flex:1;max-width:180px;padding:8px 2px;font-size:12px}.tabs button.active{color:#2265e8;background:#edf3ff}.tab{display:none}.tab.active{display:block}.chips{display:flex;gap:7px;overflow:auto;padding:4px 0 12px}.chips button{white-space:nowrap;font-size:13px}.chips .active{background:#2265e8;color:white}.exrow{display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #eef1f6;padding:10px 0;gap:8px}.exrow:last-child{border:0}.tap-ex{width:100%;text-align:left;background:transparent;border:0;border-bottom:1px solid #eef1f6;border-radius:0;padding:13px 10px;display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:58px}.tap-ex.selected{background:#eaf5ee;color:#166534;border-radius:10px}.tap-ex .mark{font-size:22px;color:#94a3b8}.tap-ex.selected .mark{color:#16803c}.tap-ex:active{background:#e8edf5}.catalog-row{display:flex;align-items:center;border-bottom:1px solid #eef1f6}.catalog-row .tap-ex{flex:1;border:0}.catalog-row .fav{flex:none}.sets{width:100%;border-collapse:collapse;margin-top:8px}.sets td,.sets th{padding:5px 3px;text-align:center;font-size:13px}.sets input{width:100%;max-width:105px;text-align:center;padding:8px 3px}.sets input[type=checkbox]{width:20px;height:20px}.phase{font-weight:700;margin:20px 0 10px}.timer{font-size:32px;font-weight:750;font-variant-numeric:tabular-nums}.field{display:grid;gap:5px;flex:1;min-width:125px;margin-bottom:10px}.field label{font-size:13px;color:#56657a}.overlay{position:fixed;inset:0;background:#10213a99;z-index:10;display:none;align-items:flex-end;justify-content:center}.overlay.open{display:flex}.sheet{background:#f7f9fc;width:100%;max-width:760px;border-radius:22px 22px 0 0;padding:17px;max-height:88vh;overflow:auto}.tag{font-size:11px;color:#536782;background:#edf2f8;padding:4px 7px;border-radius:8px}.empty{text-align:center;color:#6c7c91;padding:18px}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}@media(min-width:800px){.overlay{align-items:center}.sheet{border-radius:22px;max-height:85vh}}
+ .drag-handle{touch-action:none;user-select:none;-webkit-user-select:none;cursor:grab;background:#edf3ff;color:#2265e8;font-size:21px;min-width:43px;min-height:43px}.dragging{opacity:.22;border:2px dashed #2265e8}.drag-ghost{position:fixed!important;z-index:9999;pointer-events:none;box-shadow:0 16px 40px #17243a55;transform:rotate(-1.5deg) scale(1.015);opacity:.97;max-height:75vh;overflow:hidden;background:#fff;border:2px solid #2265e8;transition:none!important}.drop-target{outline:3px solid #2265e8!important;outline-offset:2px}.drop-target{outline:2px solid #2265e8;outline-offset:2px} 
+
+#myNumPad{position:fixed;inset:0;z-index:30000;background:#0009;display:none;align-items:flex-end;justify-content:center}
+#myNumPad.open{display:flex}
+#myNumPanel{width:min(100%,440px);background:#f4f6fa;border-radius:22px 22px 0 0;padding:16px 16px max(20px,env(safe-area-inset-bottom));color:#17243a}
+#myNumValue{background:white;text-align:right;font-size:38px;border-radius:12px;padding:10px 14px;min-height:64px;margin:12px 0;overflow:hidden}
+#myNumGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+#myNumGrid button{background:white;color:#17243a;border:0;border-radius:14px;min-height:68px;font-size:30px;font-weight:600;touch-action:manipulation}
+#myNumGrid button:active{background:#cfe0fb}
+#myNumActions{display:flex;justify-content:space-between;align-items:center}
+#myNumActions button{font-size:17px;padding:12px}
+input[type="number"]{font-size:16px;cursor:pointer;touch-action:manipulation}
+
+.rest-sound-switch{display:flex !important;align-items:center;flex-direction:row !important;flex-wrap:nowrap !important;gap:10px;width:100%;text-align:left;background:transparent;padding:5px 0;border:0;color:#17243a;font-weight:600}
+.rest-sound-switch .switch-track{flex:0 0 47px;display:inline-flex;align-items:center;width:47px;height:28px;padding:3px;border-radius:30px;background:#9ca3af;transition:background .18s}
+.rest-sound-switch[aria-checked="true"] .switch-track{background:#16a34a}
+.rest-sound-switch .switch-knob{width:22px;height:22px;background:white;border-radius:50%;box-shadow:0 1px 3px #0003;transition:transform .18s}
+.rest-sound-switch[aria-checked="true"] .switch-knob{transform:translateX(19px)}
+.rest-sound-switch .rest-sound-label{display:inline-flex;align-items:center;line-height:20px;margin-left:4px;text-align:left}
+.rest-sound-switch .bell-icon{display:block !important;max-width:20px;max-height:20px;flex:0 0 20px;vertical-align:middle;width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+
+/* Keep drag handle, exercise title and delete action aligned on one row */
+.workout-ex .exercise-heading{display:flex;flex-direction:row;flex-wrap:nowrap;align-items:center;justify-content:space-between;gap:8px;min-width:0}
+.workout-ex .exercise-heading-title{display:flex;flex-direction:row;flex-wrap:nowrap;align-items:center;flex:1 1 auto;min-width:0;gap:8px}
+.workout-ex .exercise-heading-title>div{min-width:0;flex:1 1 auto;overflow-wrap:anywhere}
+.workout-ex .exercise-heading-title h3{margin:0 0 3px;line-height:1.25;font-size:15px}
+.workout-ex .exercise-heading .drag-handle{flex:0 0 auto}
+.workout-ex .exercise-heading>button.danger{flex:0 0 auto;white-space:nowrap;padding:8px 9px;margin-left:auto;font-size:12px}
+</style></head><body><main><header><div><h1>MyGym <span style="color:#2265e8">6.16</span></h1><div class="muted">Тренировки без лишних действий</div></div><span class="tag" id="saved">Данные на устройстве</span></header>
+<section id="training" class="tab active"><div class="card"><div class="row between"><div><div class="muted">Время тренировки</div><div class="timer" id="clock">00:00:00</div></div><div class="row"><button id="start" class="primary" onclick="startWorkout()">Начать тренировку</button><button id="finish" onclick="finishWorkout()" style="display:none">Завершить</button></div></div><div id="rest" class="muted" style="margin-top:10px"></div><div id="workoutNotice" class="muted" aria-live="polite"></div></div><div id="workout"></div></section>
+<section id="library" class="tab"><div class="card"><h2>Каталог упражнений</h2><input id="search" placeholder="Поиск упражнения..." style="width:100%" oninput="renderLibrary()"><div class="chips" id="filters"></div><div id="catalogItems"></div><div class="actions"><button onclick="addCustom()">＋ Своё упражнение</button></div></div></section>
+<section id="history" class="tab"><h2>История тренировок</h2><div id="historyItems"></div></section>
+<section id="profile" class="tab"><h2>Профиль спортсмена</h2><div class="card"><div class="row"><div class="field"><label>Имя</label><input id="pname" placeholder="Имя"></div><div class="field"><label>Пол</label><select id="psex"><option value="">Не указан</option><option value="m">Мужской</option><option value="f">Женский</option></select></div></div><div class="row"><div class="field"><label>Возраст, лет</label><input id="page" type="text" inputmode="none" readonly onclick="myNumOpen(this)" min="1"></div><div class="field"><label>Рост, см</label><input id="pheight" type="text" inputmode="none" readonly onclick="myNumOpen(this)" min="1"></div><div class="field"><label>Вес, кг</label><input id="pweight" type="text" inputmode="none" readonly onclick="myNumOpen(this)" min="1" step=".1"></div></div><div class="field"><label>Интенсивность тренировки</label><select id="pintensity"><option value="3">Лёгкая</option><option value="4">Средняя</option><option value="5.5">Высокая</option></select></div><button class="primary" onclick="saveProfile()">Сохранить профиль</button><p class="muted">Калории оцениваются по весу, времени и условному MET (метаболический эквивалент нагрузки — показатель интенсивности физической активности). Это не измерение, а приблизительный общий расход, включая расход в покое.</p></div><div class="card"><h3>Настройки</h3><div class="field" style="margin-bottom:14px"><label for="mygymLanguage">Язык приложения</label><select id="mygymLanguage" onchange="mygymSetLanguage(this.value)" style="width:100%;max-width:290px"><option value="ru">Русский</option><option value="en">English</option><option value="es">Español</option><option value="zh">简体中文</option></select></div><div class="actions"><button type="button" id="backgroundAudioToggle" class="rest-sound-switch" role="switch" aria-label="Звуковые сигналы отдыха" aria-checked="false" onclick="toggleBackgroundAudio()"><span class="switch-track" aria-hidden="true"><span class="switch-knob"></span></span><svg class="bell-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg><span class="rest-sound-label">Отдых между подходами</span></button></div></div><div class="card" id="bleCard"><h3>⌁ Bluetooth · <span data-ble-label="title">Фитнес-браслет</span></h3><p class="muted" data-ble-label="info">Подключение к устройствам, передающим пульс по стандартному BLE Heart Rate Service (0x180D). На iPhone в Safari недоступно.</p><div class="row between"><span data-ble-label="status">Статус</span><b id="bleStatus">Не подключён</b></div><div class="row between" style="margin-top:9px"><span data-ble-label="device">Устройство</span><b id="bleDevice">—</b></div><div class="row between" style="margin-top:9px"><span data-ble-label="pulse">Пульс</span><b id="bleHeart">—</b></div><div class="row between" style="margin-top:9px"><span data-ble-label="avg">Средний пульс за тренировку</span><b id="bleAverage">—</b></div><div class="row between" style="margin-top:9px"><span data-ble-label="max">Максимальный пульс</span><b id="bleMaximum">—</b></div><div class="actions" style="margin-top:14px"><button type="button" class="primary" id="bleConnect" onclick="mygymBleConnect()">Найти браслет</button><button type="button" id="bleDisconnect" onclick="mygymBleDisconnect()" disabled>Отключить</button></div><p class="muted" id="bleHelp" style="margin-bottom:0">При достаточных данных пульса калории оцениваются по пульсовой формуле; иначе по MET. Для силовых нагрузок погрешность может быть высокой.</p></div><div class="card"><h3>Резервная копия</h3><div class="actions"><button onclick="exportBackup()">Скачать JSON</button><button onclick="document.getElementById('importFile').click()">Восстановить JSON</button><input type="file" id="importFile" accept=".json,application/json" style="display:none" onchange="importBackup(event)"></div><p class="muted">Перед обновлением HTML сохраняйте резервную копию. Данные разных файлов или браузеров могут храниться отдельно.</p></div><div class="card"><details><summary style="cursor:pointer;font-weight:700;font-size:16px">О приложении</summary><div style="padding-top:12px"><p><b>MyGym — персональный дневник тренировок</b>, который помогает планировать занятия, отслеживать нагрузки и видеть свой прогресс.</p><p>Возможности приложения:</p><ul><li>Создание тренировок с разминкой, силовыми упражнениями, кардио и заминкой.</li><li>Добавление собственных упражнений.</li><li>Учёт подходов, повторений, рабочего веса и времени выполнения.</li><li>Таймер отдыха между подходами со звуковыми сигналами.</li><li>История тренировок и отслеживание результатов.</li><li>Примерный расчёт потраченных калорий.</li><li>Работа без интернета.</li><li>Хранение данных на устройстве с возможностью резервного копирования.</li></ul><p><b>MyGym — тренируйся, записывай, прогрессируй.</b></p><p class="muted">Версия 6.17</p></div></details></div></section>
+</main><nav class="tabs"><button class="active" data-tab="training" onclick="tab('training')">🏋️<div>Тренировка</div></button><button data-tab="library" onclick="tab('library')">📚<div>Упражнения</div></button><button data-tab="history" onclick="tab('history')">📈<div>История</div></button><button data-tab="profile" onclick="tab('profile')">👤<div>Профиль</div></button></nav>
+<div class="overlay" id="modal" onclick="if(event.target===this)closeModal()"><div class="sheet"><div class="row between"><h2>Выбрать упражнения</h2><button onclick="closeModal()">✕</button></div><div id="modalBody"></div></div></div>
+<script>
+const SEED={"ex": [{"name": "Жим ногами", "rest": 180, "sets": [{"kg": 125, "reps": 20, "done": false}, {"kg": 150, "reps": 20, "done": false}, {"kg": 175, "reps": 17, "done": false}, {"kg": 200, "reps": 12, "done": false}, {"kg": 200, "reps": 15, "done": false}]}, {"name": "Тяга верхнего блока", "rest": 90, "sets": [{"kg": 64, "reps": 15, "done": false}, {"kg": 68, "reps": 15, "done": false}, {"kg": 73, "reps": 12, "done": false}, {"kg": 77, "reps": 12, "done": false}, {"kg": 77, "reps": 12, "done": false}]}, {"name": "Бабочка", "rest": 60, "sets": [{"kg": 59, "reps": 15, "done": false}, {"kg": 68, "reps": 15, "done": false}, {"kg": 72.6, "reps": 12, "done": false}, {"kg": 77.1, "reps": 9, "done": false}, {"kg": 77.1, "reps": 10, "done": false}]}], "history": [{"date": "2026-11-18T16:56:36.034Z", "ex": [{"name": "Жим ногами", "rest": 180, "sets": [{"kg": 125, "reps": 20, "done": true}, {"kg": 150, "reps": 20, "done": true}, {"kg": 175, "reps": 17, "done": true}, {"kg": 200, "reps": 12, "done": true}, {"kg": 200, "reps": 15, "done": true}]}, {"name": "Тяга верхнего блока", "rest": 90, "sets": [{"kg": 64, "reps": 15, "done": true}, {"kg": 68, "reps": 15, "done": true}, {"kg": 73, "reps": 12, "done": true}, {"kg": 77, "reps": 12, "done": true}, {"kg": 77, "reps": 12, "done": true}]}, {"name": "Бабочка", "rest": 60, "sets": [{"kg": 59, "reps": 15, "done": true}, {"kg": 68, "reps": 15, "done": true}, {"kg": 72.6, "reps": 12, "done": true}, {"kg": 77.1, "reps": 9, "done": true}, {"kg": 77.1, "reps": 10, "done": true}]}]}], "favorites": ["Жим ногами", "Тяга верхнего блока", "Бабочка"]};const CATALOG={"Грудь": ["Жим штанги лёжа", "Жим гантелей лёжа", "Жим в грудном тренажёре", "Жим в Смите", "Жим на наклонной скамье", "Жим гантелей под наклоном", "Бабочка", "Сведение рук в кроссовере", "Отжимания", "Пуловер с гантелью"], "Спина": ["Тяга верхнего блока", "Тяга верхнего блока узким хватом", "Подтягивания", "Подтягивания в гравитроне", "Горизонтальная тяга блока", "Тяга штанги в наклоне", "Тяга гантели одной рукой", "Тяга Т-грифа", "Тяга рычажного тренажёра", "Гиперэкстензия"], "Ноги": ["Жим ногами", "Болгарские выпады", "Приседания с гантелью", "Приседания со штангой", "Приседания в Смите", "Гакк-приседания", "Разгибание ног сидя", "Сгибание ног лёжа", "Сгибание ног сидя", "Румынская тяга", "Ягодичный мост", "Отведение бедра в тренажёре", "Приведение бедра в тренажёре", "Подъём на носки сидя", "Подъём на носки стоя"], "Плечи": ["Жим гантелей сидя", "Жим плечами в тренажёре", "Жим штанги стоя", "Махи гантелями в стороны", "Подъём гантелей перед собой", "Обратная бабочка", "Тяга каната к лицу", "Разведение гантелей в наклоне"], "Руки": ["Сгибание рук со штангой", "Сгибание рук с гантелями", "Молотки", "Сгибание рук на скамье Скотта", "Сгибание рук в блоке", "Разгибание рук на верхнем блоке", "Французский жим", "Разгибание рук с канатом", "Разгибание руки из-за головы", "Отжимания от скамьи"], "Кор": ["Планка", "Боковая планка", "Скручивания", "Обратные скручивания", "Подъём коленей в висе", "Мёртвый жук", "Птица-собака", "Паллоф-пресс"], "Кардио": ["Велотренажёр", "Спин-байк", "Гребной тренажёр", "Эллипсоид", "Беговая дорожка", "Степпер"], "Разминка": ["Лёгкий велотренажёр", "Лёгкая ходьба", "Круги плечами", "Мобилизация тазобедренных суставов", "Плавные сгибания и разгибания коленей", "Разминочный подход"], "Заминка": ["Спокойный велотренажёр", "Медленная ходьба", "Растяжка икроножных мышц", "Мягкая растяжка грудных мышц", "Растяжка задней поверхности бедра", "Спокойное дыхание"]};const KEY='mygym-v5-data';const groups=Object.keys(CATALOG);const cardio=CATALOG['Кардио'];const warm=CATALOG['Разминка'];const cool=CATALOG['Заминка'];
+let state;try{state=JSON.parse(localStorage.getItem(KEY))}catch(e){}if(!state){state={ex:(SEED.ex||[]).map(x=>({...x,phase:'main',kind:'strength'})),history:SEED.history||[],favorites:SEED.favorites||[],custom:[],profile:{},startedAt:null,elapsed:0};save()}
+state.ex=state.ex||[];state.history=state.history||[];state.favorites=state.favorites||[];state.custom=state.custom||[];state.customKinds=state.customKinds||{};state.profile=state.profile||{};state.elapsed=state.elapsed||0;
+let filter='Все',targetPhase='main',modalFilter='Все',restEnd=0,restAlerted=true;let audioCtx=null;
+function save(){localStorage.setItem(KEY,JSON.stringify(state))}
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function tab(id){if(!['training','library','history','profile'].includes(id))return;try{sessionStorage.setItem('mygym-active-tab',id)}catch(e){}document.querySelectorAll('.tab').forEach(e=>e.classList.toggle('active',e.id===id));document.querySelectorAll('.tabs button').forEach(e=>e.classList.toggle('active',e.dataset.tab===id));if(id==='library')renderLibrary();if(id==='history')renderHistory();if(id==='profile')loadProfile()}
+function phaseFor(name){return warm.includes(name)?'warm':cool.includes(name)?'cool':'main'}
+function kindFor(name){return state.customKinds?.[name]|| (cardio.includes(name)||name.includes('велотренажёр')||name.includes('ходьба')?'cardio':warm.includes(name)||cool.includes(name)?'timed':'strength')}
+function allItems(){return [...groups.flatMap(g=>CATALOG[g].map(name=>({name,group:g}))),...state.custom.map(name=>({name,group:'Свои'}))]}
+function filtered(f,q){return allItems().filter(x=>(f==='Все'||x.group===f||f==='★ Избранное'&&state.favorites.includes(x.name))&&x.name.toLowerCase().includes(q.toLowerCase()))}
+function chips(id,selected,handler,options){document.getElementById(id).innerHTML=options.map(x=>`<button class="${selected===x?'active':''}" onclick="${handler}(${JSON.stringify(x).replace(/"/g,'&quot;')})">${esc(x)}</button>`).join('')}
+function setFilter(x){filter=x;renderLibrary()}
+function selectedExercise(name){return state.ex.some(e=>e.name===name)}
+function toggleExercise(name,phase){
+ const index=state.ex.findIndex(e=>e.name===name);
+ if(index>=0){state.ex.splice(index,1)}
+ else{const kind=kindFor(name);state.ex.push({name,phase,kind,rest:90,sets:kind==='strength'?[{kg:0,reps:12,done:false}]:kind==='timed'?[{minutes:5,done:false}]:[{minutes:5,km:0,level:1,done:false}]})}
+ save();renderWorkout();
+ if(document.getElementById('library').classList.contains('active'))renderLibrary();
+ if(document.getElementById('modal').classList.contains('open'))renderPicker();
+}
+function exerciseTap(name,phase){
+ const selected=selectedExercise(name),n=JSON.stringify(name).replace(/"/g,'&quot;');
+ return `<button type="button" class="tap-ex ${selected?'selected':''}" aria-pressed="${selected}" onclick="toggleExercise(${n},'${phase}')"><span><b>${esc(name)}</b><div class="muted">${esc(allItems().find(x=>x.name===name)?.group||'Свои')}</div></span><span class="mark" aria-hidden="true">${selected?'✓':'○'}</span></button>`;
+}
+function renderLibrary(){chips('filters',filter,'setFilter',['Все','★ Избранное',...groups,'Свои']);let q=document.getElementById('search').value||'';document.getElementById('catalogItems').innerHTML=filtered(filter,q).map(x=>`<div class="catalog-row">${exerciseTap(x.name,phaseFor(x.name))}<button class="small fav" aria-label="Избранное" onclick="favorite(${JSON.stringify(x.name).replace(/"/g,'&quot;')})">${state.favorites.includes(x.name)?'★':'☆'}</button></div>`).join('')||'<div class="empty">Ничего не найдено</div>'}
+
+function favorite(n){state.favorites=state.favorites.includes(n)?state.favorites.filter(x=>x!==n):[...state.favorites,n];save();renderLibrary()}
+function addCustom(){let n=prompt('Название нового упражнения');if(!n||!n.trim())return;n=n.trim();let kind=prompt('Тип упражнения: 1 — силовое, 2 — кардио, 3 — растяжка','1');if(kind===null)return;kind=({'1':'strength','2':'cardio','3':'timed'})[kind.trim()];if(!kind){alert('Выберите 1, 2 или 3');return}if(!state.custom.includes(n))state.custom.push(n);state.customKinds[n]=kind;save();renderLibrary()}
+function addExercise(name,phase){let kind=kindFor(name);state.ex.push({name,phase,kind,rest:90,sets:kind==='strength'?[{kg:0,reps:12,done:false}]:kind==='timed'?[{minutes:5,done:false}]:[{minutes:5,km:0,level:1,done:false}]});save();renderWorkout();closeModal();if(document.getElementById('library').classList.contains('active'))renderLibrary()}
+let removalNoticeTimer=null;
+function removeExercise(i){
+ if(i<0||i>=state.ex.length)return;
+ state.ex.splice(i,1);
+ save();renderWorkout();
+ const notice=document.getElementById('workoutNotice');
+ notice.textContent='Упражнение удалено';
+ clearTimeout(removalNoticeTimer);
+ removalNoticeTimer=setTimeout(()=>{notice.textContent=''},5000);
+}
+function addSet(i){let e=state.ex[i];e.sets.push({...e.sets[e.sets.length-1],done:false});save();renderWorkout()}
+let lastRemovedSet=null;
+function removeSet(i,j){
+ const e=state.ex[i];if(!e||j<0||j>=e.sets.length)return;
+ if(e.sets.length===1){document.getElementById('workoutNotice').textContent='Оставлен один подход. Чтобы убрать всё упражнение, нажмите «Удалить» в его карточке.';return}
+ lastRemovedSet={exercise:e,set:e.sets.splice(j,1)[0],index:j};
+ save();renderWorkout();
+ document.getElementById('workoutNotice').innerHTML='Подход удалён. <button class="small" onclick="undoRemoveSet()">Отменить</button>';
+}
+function undoRemoveSet(){
+ if(!lastRemovedSet)return;
+ const {exercise,set,index}=lastRemovedSet;
+ if(state.ex.includes(exercise)){exercise.sets.splice(Math.min(index,exercise.sets.length),0,set);save();renderWorkout();}
+ lastRemovedSet=null;document.getElementById('workoutNotice').textContent='Удаление подхода отменено';
+}
+function update(i,j,key,val){state.ex[i].sets[j][key]=key==='done'?val:Number(val)||0;save();if(key==='done'&&val&&state.ex[i].kind==='strength')startRest(state.ex[i].rest||90)}
+function setRest(i,val){state.ex[i].rest=Number(val)||0;save()}
+function enableSound(){try{audioCtx=audioCtx||new (window.AudioContext||window.webkitAudioContext)();audioCtx.resume();return true}catch(e){return false}}
+function bell(count){if(!enableSound())return;for(let n=0;n<count;n++){let t=audioCtx.currentTime+n*.32;[880,1320,1760].forEach((freq,k)=>{let o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type='sine';o.frequency.value=freq;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(.065/(k+1),t+.015);g.gain.exponentialRampToValueAtTime(.0001,t+.65);o.connect(g).connect(audioCtx.destination);o.start(t);o.stop(t+.7)})}}
+
+let backgroundRestAudio=null,backgroundRestUrl=null;
+let backgroundAudioEnabled=localStorage.getItem('mygym-bg-audio')==='1';
+function updateRestSoundSwitch(){const b=document.getElementById('backgroundAudioToggle');if(b)b.setAttribute('aria-checked',backgroundAudioEnabled?'true':'false')}
+function toggleBackgroundAudio(){
+ backgroundAudioEnabled=!backgroundAudioEnabled;
+ localStorage.setItem('mygym-bg-audio',backgroundAudioEnabled?'1':'0');
+ updateRestSoundSwitch();
+ if(!backgroundAudioEnabled)stopBackgroundRestAudio();
+}
+function stopBackgroundRestAudio(){
+ if(backgroundRestAudio){backgroundRestAudio.pause();backgroundRestAudio.src='';backgroundRestAudio=null}
+ if(backgroundRestUrl){URL.revokeObjectURL(backgroundRestUrl);backgroundRestUrl=null}
+}
+function createRestWav(seconds){
+ const rate=11025, duration=Math.max(2,Math.min(600,Math.ceil(seconds)+1));
+ const samples=duration*rate, dataBytes=samples*2;
+ const buffer=new ArrayBuffer(44+dataBytes), view=new DataView(buffer);
+ const str=(pos,val)=>{for(let i=0;i<val.length;i++)view.setUint8(pos+i,val.charCodeAt(i))};
+ str(0,'RIFF');view.setUint32(4,36+dataBytes,true);str(8,'WAVE');str(12,'fmt ');
+ view.setUint32(16,16,true);view.setUint16(20,1,true);view.setUint16(22,1,true);
+ view.setUint32(24,rate,true);view.setUint32(28,rate*2,true);view.setUint16(32,2,true);
+ view.setUint16(34,16,true);str(36,'data');view.setUint32(40,dataBytes,true);
+ const bellAt=(t,at)=>{const elapsed=t-at;if(elapsed<0||elapsed>.55)return 0;
+ const fade=Math.min(1,elapsed/.02)*Math.exp(-elapsed*6);
+ return fade*(Math.sin(2*Math.PI*880*elapsed)*.38+Math.sin(2*Math.PI*1320*elapsed)*.20+Math.sin(2*Math.PI*1760*elapsed)*.12)};
+ for(let i=0;i<samples;i++){
+  const t=i/rate;
+  // Very quiet carrier; iOS may still suspend media playback when locked.
+  let v=.00005*Math.sin(2*Math.PI*110*t)+bellAt(t,.08)+bellAt(t,seconds)+bellAt(t,seconds+.34);
+  view.setInt16(44+i*2,Math.round(Math.max(-1,Math.min(1,v))*32767),true);
+ }
+ return new Blob([buffer],{type:'audio/wav'});
+}
+function playBackgroundRest(seconds){
+ stopBackgroundRestAudio();
+ if(!backgroundAudioEnabled)return false;
+ try{
+  backgroundRestUrl=URL.createObjectURL(createRestWav(seconds));
+  backgroundRestAudio=new Audio(backgroundRestUrl);
+  backgroundRestAudio.preload='auto';
+  backgroundRestAudio.setAttribute('playsinline','');
+  if('mediaSession' in navigator){
+   navigator.mediaSession.metadata=new MediaMetadata({title:'Отдых — MyGym',artist:'Таймер тренировки'});
+  }
+  const promise=backgroundRestAudio.play();
+  if(promise)promise.catch(()=>{document.getElementById('workoutNotice').textContent='Фоновое аудио заблокировано iOS. Сигнал при открытом экране продолжит работать.'});
+  return true;
+ }catch(e){return false}
+}
+
+function startRest(seconds){if(!seconds)return;enableSound();restEnd=Date.now()+seconds*1000;restAlerted=false;if(!playBackgroundRest(seconds))bell(1);tick()}
+function fmt(sec){sec=Math.max(0,Math.floor(sec));return [Math.floor(sec/3600),Math.floor(sec/60)%60,sec%60].map(x=>String(x).padStart(2,'0')).join(':')}
+function elapsed(){return state.elapsed+(state.startedAt?Math.floor((Date.now()-state.startedAt)/1000):0)}
+function tick(){document.getElementById('clock').textContent=fmt(elapsed());if(restEnd && Date.now()>=restEnd && !restAlerted){restAlerted=true;if(!backgroundRestAudio || backgroundRestAudio.paused)bell(2)}document.getElementById('rest').textContent=restEnd>Date.now()?'Отдых: '+Math.ceil((restEnd-Date.now())/1000)+' сек':restEnd?'Отдых завершён':''}
+setInterval(tick,1000);
+function startWorkout(){if(!state.startedAt){state.startedAt=Date.now();save()}document.getElementById('workoutNotice').textContent='Тренировка идёт';renderControls()}
+function renderControls(){const active=!!state.startedAt;document.getElementById('start').style.display=active?'none':'';document.getElementById('finish').style.display=active?'':'none';document.getElementById('finish').disabled=!active;document.getElementById('finish').className=active?'primary':'';tick()}
+function finishWorkout(){
+ if(!state.startedAt){alert('Сначала нажмите «Начать тренировку»');return}
+ const seconds=elapsed();
+ const kg=Number(state.profile.weight)||0, met=Number(state.profile.intensity)||4;
+ const pulseResult=mygymPulseCalories(seconds,kg);
+ const kcal=pulseResult?pulseResult.kcal:(kg?Math.round(met*3.5*kg/200*seconds/60):null);
+ state.history.unshift({date:new Date().toISOString(),ex:JSON.parse(JSON.stringify(state.ex)),durationSeconds:seconds,kcal,calorieSource:pulseResult?'heart-rate':'MET',avgHeartRate:pulseResult?.avg||null,maxHeartRate:pulseResult?.max||null,heartCoverage:pulseResult?.coverage||null});
+ mygymBleSamples=[];mygymBleSessionStart=null;state.startedAt=null;state.elapsed=0;restEnd=0;restAlerted=true;stopBackgroundRestAudio();
+ state.ex.forEach(e=>e.sets.forEach(set=>set.done=false));
+ save();renderControls();renderWorkout();renderHistory();
+ document.getElementById('workoutNotice').textContent='Тренировка сохранена: '+fmt(seconds)+(kcal?' · около '+kcal+' ккал':' · укажите вес в профиле для расчёта калорий');
+}
+function renderWorkout(){
+ const phases=[['warm','Разминка'],['main','Основная часть'],['cool','Заминка']];
+ let output='';
+ for(const [phase,title] of phases){
+  output+=`<div class="phase row between"><span>${title}</span><button class="small primary" onclick="openPicker('${phase}')">＋ Добавить</button></div>`;
+  const exercises=state.ex.map((e,i)=>({...e,i})).filter(e=>(e.phase||'main')===phase);
+  if(!exercises.length){output+='<div class="card muted">Пока пусто. Нажмите «Добавить».</div>';continue}
+  for(const e of exercises){
+   output+=`<div class="card workout-ex" data-ex-index="${e.i}" data-phase="${phase}"><div class="row between exercise-heading"><div class="row exercise-heading-title"><button class="drag-handle" aria-label="Переместить упражнение" title="Удерживайте и перетащите" data-drag-index="${e.i}">⠿</button><div><h3>${esc(e.name)}</h3><span class="tag">${e.kind==='cardio'?'Кардио':e.kind==='timed'?'Растяжка':'Силовое'}</span></div></div><button class="small danger" onclick="removeExercise(${e.i})">Удалить</button></div>`;
+   output+='<table class="sets"><thead><tr>'+(e.kind==='strength'?'<th>№</th><th>Вес, кг</th><th>Повт.</th>':e.kind==='timed'?'<th>№</th><th>Мин.</th>':'<th>№</th><th>Мин.</th><th>Км</th><th>Уровень</th>')+'<th>✓</th><th>−</th></tr></thead><tbody>';
+   e.sets.forEach((set,j)=>{
+    output+=`<tr><td>${j+1}</td>`;
+    if(e.kind==='strength'){
+     output+=`<td><input type="text" inputmode="none" readonly onclick="myNumOpen(this)" step=".1" value="${set.kg||0}" onchange="update(${e.i},${j},'kg',this.value)"></td><td><input type="text" inputmode="none" readonly onclick="myNumOpen(this)" value="${set.reps||0}" onchange="update(${e.i},${j},'reps',this.value)"></td>`;
+    }else if(e.kind==='timed'){
+     output+=`<td><input type="text" inputmode="none" readonly onclick="myNumOpen(this)" value="${set.minutes||0}" onchange="update(${e.i},${j},'minutes',this.value)"></td>`;
+    }else{
+     output+=`<td><input type="text" inputmode="none" readonly onclick="myNumOpen(this)" value="${set.minutes||0}" onchange="update(${e.i},${j},'minutes',this.value)"></td><td><input type="text" inputmode="none" readonly onclick="myNumOpen(this)" step=".1" value="${set.km||0}" onchange="update(${e.i},${j},'km',this.value)"></td><td><input type="text" inputmode="none" readonly onclick="myNumOpen(this)" value="${set.level||0}" onchange="update(${e.i},${j},'level',this.value)"></td>`;
+    }
+    output+=`<td><input type="checkbox" ${set.done?'checked':''} onchange="update(${e.i},${j},'done',this.checked)"></td><td><button class="small danger" title="Удалить подход" aria-label="Удалить подход ${j+1}" onclick="removeSet(${e.i},${j})" ${e.sets.length===1?'disabled':''}>−</button></td></tr>`;
+   });
+   output+='</tbody></table><div class="row between" style="margin-top:10px">';
+   output+=`<button class="small" onclick="addSet(${e.i})">＋ ${e.kind==='strength'?'Подход':'Интервал'}</button>`;
+   if(e.kind==='strength')output+=`<label class="muted">Отдых, сек <input style="width:80px" type="text" inputmode="none" readonly onclick="myNumOpen(this)" value="${e.rest||0}" onchange="setRest(${e.i},this.value)"></label>`;
+   output+='</div></div>';
+  }
+ }
+ document.getElementById('workout').innerHTML=output;setupDrag();
+}
+
+let dragIndex=null,dragPointer=null,dragGhost=null,dragOrigin=null,dragDX=0,dragDY=0,dragOver=null;
+function clearDragVisuals(){
+ document.querySelectorAll('.drop-target,.dragging').forEach(x=>x.classList.remove('drop-target','dragging'));
+ if(dragGhost){dragGhost.remove();dragGhost=null}
+ dragOrigin=null;dragOver=null;dragIndex=null;dragPointer=null;
+}
+function dragTargetAt(x,y){
+ const node=document.elementFromPoint(x,y)?.closest('.workout-ex');
+ return node&&node.dataset.phase===(state.ex[dragIndex]?.phase||'main')?node:null;
+}
+function setupDrag(){document.querySelectorAll('.drag-handle').forEach(h=>{
+ h.addEventListener('pointerdown',ev=>{
+  if(ev.pointerType==='mouse'&&ev.button!==0)return;
+  enableSound();
+  const card=h.closest('.workout-ex'),r=card.getBoundingClientRect();
+  dragIndex=Number(h.dataset.dragIndex);dragPointer=ev.pointerId;dragOrigin=card;
+  dragDX=ev.clientX-r.left;dragDY=ev.clientY-r.top;
+  dragGhost=card.cloneNode(true);
+  dragGhost.classList.add('drag-ghost');
+  dragGhost.style.width=r.width+'px';dragGhost.style.height=r.height+'px';
+  dragGhost.style.left=r.left+'px';dragGhost.style.top=r.top+'px';
+  document.body.appendChild(dragGhost);
+  card.classList.add('dragging');
+  h.setPointerCapture(ev.pointerId);ev.preventDefault();
+ });
+ h.addEventListener('pointermove',ev=>{
+  if(dragIndex===null||ev.pointerId!==dragPointer)return;
+  ev.preventDefault();
+  dragGhost.style.left=(ev.clientX-dragDX)+'px';
+  dragGhost.style.top=(ev.clientY-dragDY)+'px';
+  document.querySelectorAll('.drop-target').forEach(x=>x.classList.remove('drop-target'));
+  dragOver=dragTargetAt(ev.clientX,ev.clientY);
+  if(dragOver&&dragOver!==dragOrigin)dragOver.classList.add('drop-target');
+  if(ev.clientY<75)window.scrollBy(0,-12);
+  else if(ev.clientY>window.innerHeight-100)window.scrollBy(0,12);
+ });
+ h.addEventListener('pointerup',ev=>{
+  if(dragIndex===null||ev.pointerId!==dragPointer)return;
+  const target=dragTargetAt(ev.clientX,ev.clientY),from=dragIndex;
+  if(target){
+   const to=Number(target.dataset.exIndex);
+   if(to!==from){const item=state.ex.splice(from,1)[0];state.ex.splice(to,0,item);save()}
+  }
+  clearDragVisuals();renderWorkout();
+ });
+ h.addEventListener('pointercancel',()=>{clearDragVisuals();renderWorkout()});
+})}
+document.addEventListener('pointerdown',enableSound,{once:true});
+window.addEventListener('DOMContentLoaded',updateRestSoundSwitch);
+
+function openPicker(phase){targetPhase=phase;modalFilter=phase==='warm'?'Разминка':phase==='cool'?'Заминка':'Все';document.getElementById('modal').classList.add('open');document.getElementById('modalBody').innerHTML='<input id="modalSearch" placeholder="Найти упражнение..." style="width:100%" oninput="renderPicker()"><div class="chips" id="modalFilters"></div><div id="modalItems"></div><button onclick="addCustomFromPicker()">＋ Своё упражнение</button>';renderPicker()}
+function setModalFilter(x){modalFilter=x;renderPicker()}
+function renderPicker(){let opts=['Все','★ Избранное',...groups,'Свои'];chips('modalFilters',modalFilter,'setModalFilter',opts);let q=document.getElementById('modalSearch').value||'';document.getElementById('modalItems').innerHTML=filtered(modalFilter,q).map(x=>exerciseTap(x.name,targetPhase)).join('')||'<div class="empty">Не найдено</div>'}
+
+function addCustomFromPicker(){
+ const area=document.getElementById('customExerciseForm');
+ if(!area){const modal=document.getElementById('modalBody');const div=document.createElement('div');div.id='customExerciseForm';div.className='card';div.innerHTML='<label>Название упражнения<input id="customName" type="text" style="width:100%" placeholder="Например, растяжка"></label><label>Тип упражнения<select id="customKind" style="width:100%"><option value="strength">Силовое — кг и повторения</option><option value="cardio">Кардио — минуты, км, уровень</option><option value="timed">Растяжка — минуты</option></select></label><button class="primary" onclick="saveCustomFromPicker()">Добавить упражнение</button>';modal.appendChild(div);document.getElementById('customName').focus();return}
+ saveCustomFromPicker();
+}
+function saveCustomFromPicker(){let n=document.getElementById('customName').value.trim();if(!n){alert('Введите название упражнения');return}let kind=document.getElementById('customKind').value;if(!state.custom.includes(n))state.custom.push(n);state.customKinds[n]=kind;save();addExercise(n,targetPhase)}
+function closeModal(){document.getElementById('modal').classList.remove('open')}
+function renderHistory(){document.getElementById('historyItems').innerHTML=state.history.map(h=>`<div class="card"><b>${new Date(h.date).toLocaleString('ru-RU')}</b><div class="muted">${h.durationSeconds?'Длительность: '+fmt(h.durationSeconds):'Время не записано'} ${h.kcal?' · ~'+h.kcal+' ккал ('+(h.calorieSource==='heart-rate'?'♥ HR':'MET')+')':''}${h.avgHeartRate?' · ♥ '+h.avgHeartRate+' / '+h.maxHeartRate+' уд/мин':''}</div><div style="margin-top:9px">${(h.ex||[]).map(e=>`<div class="exrow"><span>${esc(e.name)}</span><span class="muted">${e.sets?.filter(s=>s.done).length||0} выполнено</span></div>`).join('')}</div></div>`).join('')||'<div class="card">Пока нет тренировок</div>'}
+function loadProfile(){let p=state.profile;for(let [id,k] of [['pname','name'],['psex','sex'],['page','age'],['pheight','height'],['pweight','weight'],['pintensity','intensity']])document.getElementById(id).value=p[k]??(k==='intensity'?'4':'')}
+function saveProfile(){state.profile={name:document.getElementById('pname').value,sex:document.getElementById('psex').value,age:document.getElementById('page').value,height:document.getElementById('pheight').value,weight:document.getElementById('pweight').value,intensity:document.getElementById('pintensity').value};save();alert('Профиль сохранён')}
+function exportBackup(){let blob=new Blob([JSON.stringify({...state,backupVersion:5},null,2)],{type:'application/json'});let a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='mygym-backup-v5.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),2000)}
+function importBackup(ev){let file=ev.target.files[0];if(!file)return;file.text().then(s=>{let d=JSON.parse(s);if(!Array.isArray(d.ex)||!Array.isArray(d.history))throw Error('Неверный формат');if(!confirm('Заменить текущие данные резервной копией?'))return;state={ex:d.ex.map(e=>({...e,phase:e.phase||'main',kind:e.kind||'strength'})),history:d.history,favorites:d.favorites||[],custom:d.custom||[],customKinds:d.customKinds||{},profile:d.profile||{},startedAt:null,elapsed:0};save();renderWorkout();renderHistory();renderLibrary();renderControls();alert('Данные восстановлены')}).catch(e=>alert('Не удалось импортировать: '+e.message));ev.target.value=''}
+renderWorkout();renderControls();tick();
+
+let myNumTarget=null,myNumTyped='';
+let myNumTouchStart=null, myNumSuppressClickUntil=0;
+document.addEventListener('touchstart',e=>{
+ const t=e.touches[0]; if(!t)return;
+ myNumTouchStart={x:t.clientX,y:t.clientY,moved:false};
+},{capture:true,passive:true});
+document.addEventListener('touchmove',e=>{
+ if(!myNumTouchStart||!e.touches[0])return;
+ const t=e.touches[0];
+ if(Math.hypot(t.clientX-myNumTouchStart.x,t.clientY-myNumTouchStart.y)>10){
+   myNumTouchStart.moved=true;myNumSuppressClickUntil=Date.now()+650;
+ }
+},{capture:true,passive:true});
+document.addEventListener('touchend',()=>{
+ if(myNumTouchStart?.moved)myNumSuppressClickUntil=Date.now()+650;
+ myNumTouchStart=null;
+},{capture:true,passive:true});
+document.addEventListener('touchcancel',()=>{myNumTouchStart=null;},{capture:true,passive:true});
+document.addEventListener('click',e=>{
+ if(e.target.closest('input[readonly][onclick*="myNumOpen"]') && Date.now()<myNumSuppressClickUntil){
+  e.preventDefault();e.stopImmediatePropagation();
+ }
+},true);
+function myNumShow(){document.getElementById('myNumValue').textContent=myNumTyped||'0'}
+function myNumOpen(input){
+ if(Date.now()<myNumSuppressClickUntil||myNumTarget)return;
+ myNumTarget=input;myNumTyped='';
+ input.blur();document.getElementById('myNumPad').classList.add('open');myNumShow();
+}
+function myNumKey(k){
+ if(k==='del')myNumTyped=myNumTyped.slice(0,-1);
+ else if(k===','){if(!myNumTyped.includes(','))myNumTyped+=(myNumTyped?'':'0')+','}
+ else if(myNumTyped.length<12)myNumTyped+=k;
+ myNumShow();
+}
+function myNumClose(ok){
+ const input=myNumTarget;if(!input)return;
+ myNumTarget=null;document.getElementById('myNumPad').classList.remove('open');
+ if(ok&&myNumTyped){input.value=myNumTyped.replace(',','.');input.dispatchEvent(new Event('input',{bubbles:true}));input.dispatchEvent(new Event('change',{bubbles:true}));}
+}
+</script><script>
+if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
+  window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(console.warn));
+}
+
+// Language setting affects presentation only; workout data and exercise identifiers stay unchanged.
+const MYGYM_I18N={"Тренировки без лишних действий":["Train without the hassle","Entrena sin complicaciones","轻松记录训练"],"Данные на устройстве":["Data stored on device","Datos guardados en el dispositivo","数据保存在设备上"],"Время тренировки":["Workout time","Tiempo de entrenamiento","训练时间"],"Начать тренировку":["Start workout","Iniciar entrenamiento","开始训练"],"Завершить":["Finish","Finalizar","结束"],"Каталог упражнений":["Exercise library","Catálogo de ejercicios","动作库"],"＋ Своё упражнение":["＋ Custom exercise","＋ Ejercicio personalizado","＋ 自定义动作"],"История тренировок":["Workout history","Historial de entrenamientos","训练记录"],"Профиль спортсмена":["Athlete profile","Perfil deportivo","运动员资料"],"Имя":["Name","Nombre","姓名"],"Пол":["Sex","Sexo","性别"],"Не указан":["Not specified","Sin especificar","未指定"],"Мужской":["Male","Masculino","男"],"Женский":["Female","Femenino","女"],"Возраст, лет":["Age, years","Edad, años","年龄"],"Рост, см":["Height, cm","Altura, cm","身高，厘米"],"Вес, кг":["Weight, kg","Peso, kg","体重，公斤"],"Интенсивность тренировки":["Workout intensity","Intensidad del entrenamiento","训练强度"],"Лёгкая":["Light","Ligera","低"],"Средняя":["Moderate","Moderada","中"],"Высокая":["High","Alta","高"],"Сохранить профиль":["Save profile","Guardar perfil","保存资料"],"Настройки":["Settings","Ajustes","设置"],"Язык приложения":["App language","Idioma de la aplicación","应用语言"],"Отдых между подходами":["Rest between sets","Descanso entre series","组间休息"],"Резервная копия":["Backup","Copia de seguridad","备份"],"Скачать JSON":["Download JSON","Descargar JSON","下载 JSON"],"Восстановить JSON":["Restore JSON","Restaurar JSON","恢复 JSON"],"О приложении":["About the app","Acerca de la aplicación","关于应用"],"MyGym — персональный дневник тренировок":["MyGym — your personal workout log","MyGym — tu diario personal de entrenamiento","MyGym — 个人训练日记"],", который помогает планировать занятия, отслеживать нагрузки и видеть свой прогресс.":[", helping you plan workouts, track loads and see your progress.",", que te ayuda a planificar entrenamientos, registrar cargas y seguir tu progreso.","，帮助你规划训练、记录负荷并查看进步。"],"Возможности приложения:":["App features:","Funciones de la aplicación:","应用功能："],"Создание тренировок с разминкой, силовыми упражнениями, кардио и заминкой.":["Plan workouts with warm-up, strength, cardio and cool-down.","Planifica entrenamientos con calentamiento, fuerza, cardio y vuelta a la calma.","规划包含热身、力量、有氧和放松的训练。"],"Добавление собственных упражнений.":["Add your own exercises.","Añade tus propios ejercicios.","添加自定义动作。"],"Учёт подходов, повторений, рабочего веса и времени выполнения.":["Track sets, reps, weight and duration.","Registra series, repeticiones, peso y duración.","记录组数、次数、重量和时长。"],"Таймер отдыха между подходами со звуковыми сигналами.":["Rest timer with sound alerts.","Temporizador de descanso con avisos sonoros.","带声音提示的组间休息计时器。"],"История тренировок и отслеживание результатов.":["Workout history and progress tracking.","Historial de entrenamientos y seguimiento del progreso.","训练历史与进度追踪。"],"Примерный расчёт потраченных калорий.":["Estimated calories burned.","Estimación de calorías quemadas.","估算消耗的卡路里。"],"Работа без интернета.":["Works offline.","Funciona sin conexión.","支持离线使用。"],"Хранение данных на устройстве с возможностью резервного копирования.":["Local storage with backup options.","Datos locales con opción de copia de seguridad.","本地保存数据并支持备份。"],"MyGym — тренируйся, записывай, прогрессируй.":["MyGym — train, track, progress.","MyGym — entrena, registra, progresa.","MyGym — 训练、记录、进步。"],"Тренировка":["Workout","Entrenamiento","训练"],"Упражнения":["Exercises","Ejercicios","动作"],"История":["History","Historial","历史"],"Профиль":["Profile","Perfil","我的"],"Выбрать упражнения":["Choose exercises","Elegir ejercicios","选择动作"],"Отмена":["Cancel","Cancelar","取消"],"Введите значение":["Enter value","Introduce un valor","输入数值"],"Готово":["Done","Listo","完成"],"Разминка":["Warm-up","Calentamiento","热身"],"Основная часть":["Main workout","Entrenamiento principal","主要训练"],"Заминка":["Cool-down","Vuelta a la calma","放松"],"＋ Добавить":["＋ Add","＋ Añadir","＋ 添加"],"Все":["All","Todos","全部"],"★ Избранное":["★ Favorites","★ Favoritos","★ 收藏"],"Свои":["Custom","Propios","自定义"],"Ноги":["Legs","Piernas","腿部"],"Плечи":["Shoulders","Hombros","肩部"],"Спина":["Back","Espalda","背部"],"Грудь":["Chest","Pecho","胸部"],"Руки":["Arms","Brazos","手臂"],"Пресс":["Abs","Abdominales","腹部"],"Кор":["Core","Zona media","核心肌群"],"Кардио":["Cardio","Cardio","有氧"],"Растяжка":["Stretching","Estiramientos","拉伸"],"Удалить":["Delete","Eliminar","删除"],"Добавить подход":["Add set","Añadir serie","添加组"],"Вес":["Weight","Peso","重量"],"Повторения":["Reps","Repeticiones","次数"],"Подход":["Set","Serie","组"],"Минуты":["Minutes","Minutos","分钟"],"Уровень":["Level","Nivel","级别"],"Длительность:":["Duration:","Duración:","时长："],"Упражнение удалено":["Exercise removed","Ejercicio eliminado","动作已删除"],"Подход удалён.":["Set deleted.","Serie eliminada.","已删除组。"],"Отменить":["Undo","Deshacer","撤销"],"Сохранить":["Save","Guardar","保存"],"Название упражнения":["Exercise name","Nombre del ejercicio","动作名称"],"Тип упражнения":["Exercise type","Tipo de ejercicio","动作类型"],"Силовое — кг и повторения":["Strength — kg and reps","Fuerza — kg y repeticiones","力量 — 公斤和次数"],"Кардио — минуты, км, уровень":["Cardio — minutes, km, level","Cardio — minutos, km, nivel","有氧 — 分钟、公里、级别"],"Растяжка — минуты":["Stretching — minutes","Estiramientos — minutos","拉伸 — 分钟"],"Силовое":["Strength","Fuerza","力量"],"Добавить":["Add","Añadir","添加"],"Поиск упражнения...":["Search exercises...","Buscar ejercicios...","搜索动作..."],"Например, растяжка":["E.g. stretching","Por ejemplo, estiramiento","例如：拉伸"],"Пока нет тренировок":["No workouts yet","Todavía no hay entrenamientos","暂无训练记录"],"Ничего не найдено":["Nothing found","No se ha encontrado nada","未找到结果"],"Не найдено":["Not found","No encontrado","未找到"],"Пока пусто. Нажмите «Добавить».":["Empty for now. Tap “Add”.","Vacío por ahora. Pulsa «Añadir».","暂无内容，点击“添加”。"],"ккал":["kcal","kcal","千卡"],"выполнено":["completed","completadas","已完成"],"Время не записано":["Time not recorded","Tiempo no registrado","未记录时间"],"Версия 6.17":["Version 6.17","Versión 6.17","版本 6.17"],"Перед обновлением HTML сохраняйте резервную копию. Данные разных файлов или браузеров могут храниться отдельно.":["Back up your data before updating. Different browsers or installs may store data separately.","Haz una copia de seguridad antes de actualizar. Cada navegador o instalación puede guardar datos por separado.","更新前请备份数据。不同浏览器或安装版本的数据可能相互独立。"],"Калории оцениваются по весу, времени и условному MET (метаболический эквивалент нагрузки — показатель интенсивности физической активности). Это не измерение, а приблизительный общий расход, включая расход в покое.":["Calories are estimated using weight, duration and MET (metabolic equivalent of task, a measure of activity intensity). This is an estimate of total energy expenditure, including resting energy.","Las calorías se estiman según el peso, la duración y el MET (equivalente metabólico, una medida de la intensidad). Es una estimación del gasto total, incluido el gasto en reposo.","热量根据体重、时间和 MET（代谢当量，用于衡量活动强度）估算。它是包含静息消耗在内的总能量估计值。"],"Жим ногами":["Leg press","Prensa de piernas","腿举"],"Болгарские выпады":["Bulgarian split squats","Sentadillas búlgaras","保加利亚分腿蹲"],"Тяга верхнего блока":["Lat pulldown","Jalón al pecho","高位下拉"],"Бабочка":["Pec deck","Aperturas en máquina","蝴蝶机夹胸"],"Приседания со штангой":["Barbell squats","Sentadillas con barra","杠铃深蹲"],"Приседания с гантелью":["Goblet squats","Sentadillas con mancuerna","哑铃深蹲"],"Разгибание ног сидя":["Leg extensions","Extensión de piernas","坐姿腿屈伸"],"Сгибание ног лёжа":["Lying leg curls","Curl femoral tumbado","俯卧腿弯举"],"Румынская тяга":["Romanian deadlift","Peso muerto rumano","罗马尼亚硬拉"],"Ягодичный мост":["Glute bridge","Puente de glúteos","臀桥"],"Подъём на носки стоя":["Standing calf raise","Elevación de talones de pie","站姿提踵"],"Велотренажёр":["Exercise bike","Bicicleta estática","健身车"],"Беговая дорожка":["Treadmill","Cinta de correr","跑步机"],"Растяжка икроножных мышц":["Calf stretch","Estiramiento de gemelos","小腿拉伸"]};
+const MYGYM_LANG_NAMES={ru:'Русский',en:'English',es:'Español',zh:'简体中文'};
+let mygymLang=localStorage.getItem('mygym-ui-language')||'ru';
+if(!MYGYM_LANG_NAMES[mygymLang])mygymLang='ru';
+const mygymOriginalText=new WeakMap();
+const mygymRenderedText=new WeakMap();
+const mygymOriginalAttrs=new WeakMap();
+let mygymTranslationBusy=false;
+
+Object.assign(MYGYM_I18N,{"Название упражнения":["Exercise name","Nombre del ejercicio","动作名称"],"Например, растяжка":["e.g. Stretching","Por ejemplo, estiramientos","例如：拉伸"],"Тип упражнения":["Exercise type","Tipo de ejercicio","动作类型"],"Силовое — кг и повторения":["Strength — kg and reps","Fuerza — kg y repeticiones","力量 — 公斤和次数"],"Кардио — минуты, км, уровень":["Cardio — minutes, km, level","Cardio — minutos, km, nivel","有氧 — 分钟、公里、等级"],"Растяжка — минуты":["Stretching — minutes","Estiramientos — minutos","拉伸 — 分钟"],"＋ Подход":["＋ Add set","＋ Añadir serie","＋ 添加组"],"＋ Интервал":["＋ Add interval","＋ Añadir intervalo","＋ 添加间歇"],"Интервал":["Interval","Intervalo","间歇"],"Отдых, сек":["Rest, sec","Descanso, seg","休息，秒"],"№":["No.","N.º","序号"],"Кг":["kg","kg","公斤"],"Км":["km","km","公里"],"Мин.":["Min.","Min.","分钟"],"Повт.":["Reps","Repet.","次数"],"Повторы":["Reps","Repeticiones","次数"],"Повторения":["Repetitions","Repeticiones","重复次数"],"Подход":["Set","Serie","组"],"Подходы":["Sets","Series","组数"],"Удалить подход":["Delete set","Eliminar serie","删除组"],"Удалить упражнение":["Delete exercise","Eliminar ejercicio","删除动作"],"Добавить своё упражнение":["Add custom exercise","Añadir ejercicio personalizado","添加自定义动作"],"Добавить упражнение":["Add exercise","Añadir ejercicio","添加动作"],"Сохранить":["Save","Guardar","保存"],"Создать":["Create","Crear","创建"],"Силовое":["Strength","Fuerza","力量"],"Кардио":["Cardio","Cardio","有氧"],"Растяжка":["Stretching","Estiramientos","拉伸"],"Вес, кг":["Weight, kg","Peso, kg","重量，公斤"],"Время, мин":["Time, min","Tiempo, min","时间，分钟"]});
+Object.assign(MYGYM_I18N,{"Жим штанги лёжа": ["Barbell bench press", "Press de banca con barra", "杠铃卧推"], "Жим гантелей лёжа": ["Dumbbell bench press", "Press de banca con mancuernas", "哑铃卧推"], "Жим в грудном тренажёре": ["Chest press machine", "Press de pecho en máquina", "器械推胸"], "Жим в Смите": ["Smith machine press", "Press en máquina Smith", "史密斯机推举"], "Жим на наклонной скамье": ["Incline bench press", "Press de banca inclinado", "上斜卧推"], "Жим гантелей под наклоном": ["Incline dumbbell press", "Press inclinado con mancuernas", "上斜哑铃卧推"], "Сведение рук в кроссовере": ["Cable fly", "Aperturas en polea", "绳索夹胸"], "Отжимания": ["Push-ups", "Flexiones", "俯卧撑"], "Пуловер с гантелью": ["Dumbbell pullover", "Pulóver con mancuerna", "哑铃上拉"], "Тяга верхнего блока узким хватом": ["Close-grip lat pulldown", "Jalón al pecho con agarre estrecho", "窄握高位下拉"], "Подтягивания": ["Pull-ups", "Dominadas", "引体向上"], "Подтягивания в гравитроне": ["Assisted pull-ups", "Dominadas asistidas", "辅助引体向上"], "Горизонтальная тяга блока": ["Seated cable row", "Remo sentado en polea", "坐姿绳索划船"], "Тяга штанги в наклоне": ["Bent-over barbell row", "Remo inclinado con barra", "俯身杠铃划船"], "Тяга гантели одной рукой": ["One-arm dumbbell row", "Remo con mancuerna a una mano", "单臂哑铃划船"], "Тяга Т-грифа": ["T-bar row", "Remo con barra T", "T杠划船"], "Тяга рычажного тренажёра": ["Machine row", "Remo en máquina", "器械划船"], "Гиперэкстензия": ["Back extensions", "Hiperextensiones", "背部伸展"], "Приседания в Смите": ["Smith machine squats", "Sentadillas en Smith", "史密斯机深蹲"], "Гакк-приседания": ["Hack squats", "Sentadillas hack", "哈克深蹲"], "Сгибание ног сидя": ["Seated leg curls", "Curl femoral sentado", "坐姿腿弯举"], "Отведение бедра в тренажёре": ["Hip abduction machine", "Abducción de cadera en máquina", "器械髋外展"], "Приведение бедра в тренажёре": ["Hip adduction machine", "Aducción de cadera en máquina", "器械髋内收"], "Подъём на носки сидя": ["Seated calf raises", "Elevación de talones sentado", "坐姿提踵"], "Жим гантелей сидя": ["Seated dumbbell shoulder press", "Press de hombros sentado con mancuernas", "坐姿哑铃推肩"], "Жим плечами в тренажёре": ["Shoulder press machine", "Press de hombros en máquina", "器械推肩"], "Жим штанги стоя": ["Standing overhead press", "Press militar de pie", "站姿杠铃推举"], "Махи гантелями в стороны": ["Dumbbell lateral raises", "Elevaciones laterales", "哑铃侧平举"], "Подъём гантелей перед собой": ["Dumbbell front raises", "Elevaciones frontales", "哑铃前平举"], "Обратная бабочка": ["Reverse pec deck", "Pec deck inverso", "反向蝴蝶机"], "Тяга каната к лицу": ["Face pulls", "Face pulls en polea", "绳索面拉"], "Разведение гантелей в наклоне": ["Bent-over reverse fly", "Pájaros con mancuernas", "俯身哑铃飞鸟"], "Сгибание рук со штангой": ["Barbell curls", "Curl de bíceps con barra", "杠铃弯举"], "Сгибание рук с гантелями": ["Dumbbell curls", "Curl de bíceps con mancuernas", "哑铃弯举"], "Молотки": ["Hammer curls", "Curl martillo", "锤式弯举"], "Сгибание рук на скамье Скотта": ["Preacher curls", "Curl en banco Scott", "牧师凳弯举"], "Сгибание рук в блоке": ["Cable biceps curls", "Curl de bíceps en polea", "绳索二头弯举"], "Разгибание рук на верхнем блоке": ["Triceps pushdowns", "Extensión de tríceps en polea alta", "绳索下压"], "Французский жим": ["Skull crushers", "Press francés", "仰卧臂屈伸"], "Разгибание рук с канатом": ["Rope triceps extensions", "Extensión de tríceps con cuerda", "绳索三头伸展"], "Разгибание руки из-за головы": ["Overhead triceps extension", "Extensión de tríceps sobre la cabeza", "过头三头伸展"], "Отжимания от скамьи": ["Bench dips", "Fondos en banco", "凳上臂屈伸"], "Планка": ["Plank", "Plancha", "平板支撑"], "Боковая планка": ["Side plank", "Plancha lateral", "侧平板支撑"], "Скручивания": ["Crunches", "Abdominales cortos", "卷腹"], "Обратные скручивания": ["Reverse crunches", "Abdominales inversos", "反向卷腹"], "Подъём коленей в висе": ["Hanging knee raises", "Elevación de rodillas colgado", "悬垂举膝"], "Мёртвый жук": ["Dead bug", "Bicho muerto", "死虫式"], "Птица-собака": ["Bird dog", "Bird dog", "鸟狗式"], "Паллоф-пресс": ["Pallof press", "Press Pallof", "帕洛夫推举"], "Спин-байк": ["Spin bike", "Bicicleta de spinning", "动感单车"], "Гребной тренажёр": ["Rowing machine", "Máquina de remo", "划船机"], "Эллипсоид": ["Elliptical trainer", "Elíptica", "椭圆机"], "Степпер": ["Stepper", "Máquina de step", "踏步机"], "Лёгкий велотренажёр": ["Easy stationary cycling", "Bicicleta estática suave", "轻松骑行"], "Лёгкая ходьба": ["Easy walking", "Caminata suave", "轻松步行"], "Круги плечами": ["Shoulder circles", "Círculos de hombros", "肩部绕环"], "Мобилизация тазобедренных суставов": ["Hip mobility", "Movilidad de cadera", "髋关节活动"], "Плавные сгибания коленей": ["Gentle knee bends", "Flexiones suaves de rodillas", "轻柔屈膝"]});
+Object.assign(MYGYM_I18N,{"Плавные сгибания и разгибания коленей": ["Gentle knee bends and extensions", "Flexiones y extensiones suaves de rodillas", "轻柔屈伸膝盖"], "Разминочный подход": ["Warm-up set", "Serie de calentamiento", "热身组"], "Спокойный велотренажёр": ["Easy stationary cycling", "Bicicleta estática suave", "轻松骑行"], "Медленная ходьба": ["Slow walking", "Caminata lenta", "慢走"], "Мягкая растяжка грудных мышц": ["Gentle chest stretch", "Estiramiento suave del pecho", "轻柔胸部拉伸"], "Растяжка задней поверхности бедра": ["Hamstring stretch", "Estiramiento de isquiotibiales", "腘绳肌拉伸"], "Спокойное дыхание": ["Relaxed breathing", "Respiración tranquila", "平缓呼吸"]});
+function mygymTranslateString(raw){
+ if(mygymLang==='ru')return raw;
+ const trim=raw.trim();if(!trim)return raw;
+ let trans=MYGYM_I18N[trim]?.[{en:0,es:1,zh:2}[mygymLang]];
+ if(!trans){
+  const m=trim.match(/^(.+?) (\d+) выполнено$/);
+  if(m)trans=m[1]+' '+m[2]+' '+MYGYM_I18N['выполнено'][{en:0,es:1,zh:2}[mygymLang]];
+ }
+ if(!trans){
+  const m=trim.match(/^Удалить подход (\d+)$/);
+  if(m)trans=MYGYM_I18N['Удалить подход'][{en:0,es:1,zh:2}[mygymLang]]+' '+m[1];
+ }
+ if(!trans)return raw;
+ return raw.slice(0,raw.length-raw.trimStart().length)+trans+raw.slice(raw.trimEnd().length);
+}
+function mygymApplyTranslations(){
+ if(mygymTranslationBusy)return;
+ mygymTranslationBusy=true;
+ try{
+  document.documentElement.lang=mygymLang==='zh'?'zh-CN':mygymLang;
+  const select=document.getElementById('mygymLanguage');if(select)select.value=mygymLang;
+  const walker=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT);
+  let node;
+  while((node=walker.nextNode())){
+   if(node.parentElement?.closest('script,style,textarea'))continue;
+   let original=mygymOriginalText.get(node);
+   if(original===undefined){original=node.nodeValue;mygymOriginalText.set(node,original)}
+   else if(node.nodeValue!==original && node.nodeValue!==mygymRenderedText.get(node)){
+    original=node.nodeValue;mygymOriginalText.set(node,original);
+   }
+   const translated=mygymTranslateString(original);
+   if(node.nodeValue!==translated)node.nodeValue=translated;
+   mygymRenderedText.set(node,translated);
+  }
+  document.querySelectorAll('[placeholder],[aria-label]').forEach(el=>{
+   let orig=mygymOriginalAttrs.get(el);
+   if(!orig){orig={};mygymOriginalAttrs.set(el,orig)}
+   for(const attr of ['placeholder','aria-label']){
+    if(!el.hasAttribute(attr))continue;
+    if(!(attr in orig))orig[attr]=el.getAttribute(attr);
+    const val=mygymTranslateString(orig[attr]);
+    if(el.getAttribute(attr)!==val)el.setAttribute(attr,val);
+   }
+  });
+ }finally{mygymTranslationBusy=false}
+}
+function mygymSetLanguage(lang){
+ if(!MYGYM_LANG_NAMES[lang])return;
+ mygymLang=lang;localStorage.setItem('mygym-ui-language',lang);
+ mygymApplyTranslations();
+}
+const mygymLanguageObserver=new MutationObserver(()=>mygymApplyTranslations());
+mygymLanguageObserver.observe(document.body,{childList:true,subtree:true,characterData:true});
+mygymApplyTranslations();
+try{const remembered=sessionStorage.getItem('mygym-active-tab');if(['training','library','history','profile'].includes(remembered))tab(remembered)}catch(e){}
+
+// BLE Heart Rate Service (standard GATT 0x180D/0x2A37). Android Chromium only in supported contexts.
+const mygymBleStrings={
+ ru:['Фитнес-браслет','Подключение к устройствам, передающим пульс по стандартному BLE Heart Rate Service (0x180D). На iPhone в Safari недоступно.','Статус','Устройство','Пульс','Средний пульс за тренировку','Максимальный пульс','Не подключён','Подключён','Подключение…','Найти браслет','Отключить','уд/мин','Bluetooth не поддерживается этим браузером. На iPhone нужна отдельная iOS-версия приложения.','Устройство отключилось.','При достаточных данных пульса калории оцениваются по пульсовой формуле; иначе по MET. Для силовых нагрузок погрешность может быть высокой.','Не удалось подключиться: '],
+ en:['Fitness tracker','Connect devices exposing the standard BLE Heart Rate Service (0x180D). Not available in iPhone Safari.','Status','Device','Heart rate','Workout average heart rate','Maximum heart rate','Disconnected','Connected','Connecting…','Find tracker','Disconnect','bpm','Bluetooth is not supported in this browser. iPhone requires a native iOS app.','Device disconnected.','Heart rate readings are not medical data. Calories still use the existing MET estimate.','Could not connect: '],
+ es:['Pulsera de actividad','Conecta dispositivos con el servicio estándar BLE de frecuencia cardíaca (0x180D). No disponible en Safari del iPhone.','Estado','Dispositivo','Pulso','Pulso medio del entrenamiento','Pulso máximo','Desconectado','Conectado','Conectando…','Buscar pulsera','Desconectar','ppm','Este navegador no admite Bluetooth. En iPhone se necesita una app nativa.','Dispositivo desconectado.','Las lecturas del pulso no son datos médicos. Las calorías siguen estimándose mediante MET.','No se pudo conectar: '],
+ zh:['健身手环','连接支持标准 BLE 心率服务 (0x180D) 的设备。iPhone Safari 不支持。','状态','设备','心率','训练平均心率','最高心率','未连接','已连接','连接中…','搜索手环','断开连接','次/分','此浏览器不支持蓝牙。iPhone 需要原生 iOS 应用。','设备已断开连接。','心率读数不属于医疗数据。热量仍按 MET 估算。','连接失败：']};
+const mygymBleKeys=['title','info','status','device','pulse','avg','max'];
+let mygymBleDevice=null,mygymBleServer=null,mygymBleCharacteristic=null,mygymBleLatest=null,mygymBleSamples=[],mygymBleSessionStart=null;
+function mygymBleText(i){return (mygymBleStrings[typeof mygymLang==='string'?mygymLang:'ru']||mygymBleStrings.ru)[i]}
+function mygymBleUpdateUI(status){
+ document.querySelectorAll('[data-ble-label]').forEach(el=>{let idx=mygymBleKeys.indexOf(el.dataset.bleLabel);if(idx>=0)el.textContent=mygymBleText(idx)});
+ let connected=window.mygymNativeConnected===true || !!mygymBleDevice?.gatt?.connected;
+ document.getElementById('bleStatus').textContent=status||mygymBleText(connected?8:7);
+ document.getElementById('bleDevice').textContent=window.mygymNativeDevice||mygymBleDevice?.name||'—';
+ document.getElementById('bleHeart').textContent=mygymBleLatest===null?'—':mygymBleLatest+' '+mygymBleText(12);
+ let values=mygymBleSamples.map(x=>x.bpm);
+ document.getElementById('bleAverage').textContent=values.length?Math.round(values.reduce((a,b)=>a+b,0)/values.length)+' '+mygymBleText(12):'—';
+ document.getElementById('bleMaximum').textContent=values.length?Math.max(...values)+' '+mygymBleText(12):'—';
+ document.getElementById('bleConnect').textContent=mygymBleText(10);
+ document.getElementById('bleDisconnect').textContent=mygymBleText(11);
+ document.getElementById('bleDisconnect').disabled=!connected;
+ document.getElementById('bleHelp').textContent=mygymBleText(15);
+}
+function mygymBleHeartChanged(event){
+ const d=event.target.value;if(!d||d.byteLength<2)return;
+ const flags=d.getUint8(0),bpm=flags&1?(d.byteLength>=3?d.getUint16(1,true):null):d.getUint8(1);
+ if(bpm===null||bpm<20||bpm>250)return;
+ mygymBleLatest=bpm;
+ if(state.startedAt){if(mygymBleSessionStart!==state.startedAt){mygymBleSessionStart=state.startedAt;mygymBleSamples=[]}mygymBleSamples.push({at:Date.now(),bpm});if(mygymBleSamples.length>20000)mygymBleSamples.shift()}
+ mygymBleUpdateUI();
+}
+function mygymBleDisconnected(){
+ if(mygymBleCharacteristic)try{mygymBleCharacteristic.removeEventListener('characteristicvaluechanged',mygymBleHeartChanged)}catch(e){}
+ mygymBleCharacteristic=null;mygymBleServer=null;mygymBleLatest=null;mygymBleUpdateUI(mygymBleText(14));
+}
+async function mygymBleConnect(){
+ if(window.webkit?.messageHandlers?.mygymBluetooth){window.webkit.messageHandlers.mygymBluetooth.postMessage({action:'scan'});return}
+ if(!navigator.bluetooth||!window.isSecureContext){mygymBleUpdateUI(mygymBleText(13));return}
+ const btn=document.getElementById('bleConnect');btn.disabled=true;mygymBleUpdateUI(mygymBleText(9));
+ try{
+  if(mygymBleDevice?.gatt?.connected)mygymBleDisconnect();
+  const device=await navigator.bluetooth.requestDevice({filters:[{services:['heart_rate']}],optionalServices:['heart_rate']});
+  mygymBleDevice=device;device.addEventListener('gattserverdisconnected',mygymBleDisconnected);
+  mygymBleServer=await device.gatt.connect();
+  const service=await mygymBleServer.getPrimaryService('heart_rate');
+  mygymBleCharacteristic=await service.getCharacteristic('heart_rate_measurement');
+  await mygymBleCharacteristic.startNotifications();
+  mygymBleCharacteristic.addEventListener('characteristicvaluechanged',mygymBleHeartChanged);
+  mygymBleUpdateUI();
+ }catch(e){mygymBleUpdateUI(mygymBleText(16)+(e?.message||String(e)))}finally{btn.disabled=false}
+}
+function mygymBleDisconnect(){if(window.webkit?.messageHandlers?.mygymBluetooth){window.webkit.messageHandlers.mygymBluetooth.postMessage({action:'disconnect'});return}if(mygymBleDevice?.gatt?.connected)mygymBleDevice.gatt.disconnect();else mygymBleDisconnected()}
+// iOS CoreBluetooth -> WKWebView message bridge. No Web Bluetooth on Safari.
+window.mygymNativeConnected=false;window.mygymNativeDevice='';
+window.mygymNativeBLE=function(event){
+ if(event.type==='connected'){window.mygymNativeConnected=true;window.mygymNativeDevice=event.name||'BLE';mygymBleUpdateUI();}
+ if(event.type==='disconnected'){window.mygymNativeConnected=false;mygymBleLatest=null;mygymBleUpdateUI();}
+ if(event.type==='pulse' && Number.isFinite(event.bpm)){
+   const bpm=Number(event.bpm);if(bpm<20||bpm>250)return;
+   mygymBleLatest=bpm;
+   if(state.startedAt){if(mygymBleSessionStart!==state.startedAt){mygymBleSessionStart=state.startedAt;mygymBleSamples=[]}
+     mygymBleSamples.push({at:Date.now(),bpm});if(mygymBleSamples.length>20000)mygymBleSamples.shift();}
+   mygymBleUpdateUI();
+ }
+ if(event.type==='error'){mygymBleUpdateUI(event.message||'Bluetooth error')}
+};
+// Heart-rate-based estimate, Keytel et al. (2005), gross energy, not a measurement.
+// Only when enough samples cover the workout; never claim this is more accurate for lifting.
+function mygymPulseCalories(seconds,kg){
+ const age=Number(state.profile.age),sex=state.profile.sex;
+ if(!kg||!age||age<18||age>65||!['m','f'].includes(sex)||seconds<180)return null;
+ const samples=mygymBleSamples.filter(x=>x.at>=Date.now()-seconds*1000 && x.bpm>=40 && x.bpm<=220).sort((a,b)=>a.at-b.at);
+ if(samples.length<30)return null;
+ // A reading is treated as covering at most 10 seconds, avoiding false coverage after disconnects.
+ let covered=0,weighted=0;
+ for(let i=0;i<samples.length;i++){
+  const next=i+1<samples.length?samples[i+1].at:Date.now();
+  const span=Math.min(10000,Math.max(0,next-samples[i].at));covered+=span;weighted+=samples[i].bpm*span;
+ }
+ const coverage=Math.min(1,covered/(seconds*1000));if(coverage<0.7||covered<=0)return null;
+ const avg=weighted/covered;
+ // kJ/min empirical equations; conversion to kcal/min = /4.184.
+ const kjPerMin=sex==='m'?(-55.0969+0.6309*avg+0.1988*kg+0.2017*age):(-20.4022+0.4472*avg-0.1263*kg+0.074*age);
+ const kcal=Math.round(Math.max(0,kjPerMin/4.184)*seconds/60);
+ return {kcal,avg:Math.round(avg),max:Math.max(...samples.map(x=>x.bpm)),coverage:Math.round(coverage*100)};
+}
+const mygymBleOriginalSetLanguage=mygymSetLanguage;
+mygymSetLanguage=function(lang){mygymBleOriginalSetLanguage(lang);mygymBleUpdateUI()};
+mygymBleUpdateUI();
+</script><div id="myNumPad"><div id="myNumPanel" role="dialog" aria-label="Ввод числового значения" aria-modal="true">
+<div id="myNumActions"><button type="button" onclick="myNumClose(false)">Отмена</button><strong>Введите значение</strong><button type="button" class="primary" onclick="myNumClose(true)">Готово</button></div>
+<div id="myNumValue">0</div><div id="myNumGrid">
+<button type="button" onclick="myNumKey('1')">1</button><button type="button" onclick="myNumKey('2')">2</button><button type="button" onclick="myNumKey('3')">3</button>
+<button type="button" onclick="myNumKey('4')">4</button><button type="button" onclick="myNumKey('5')">5</button><button type="button" onclick="myNumKey('6')">6</button>
+<button type="button" onclick="myNumKey('7')">7</button><button type="button" onclick="myNumKey('8')">8</button><button type="button" onclick="myNumKey('9')">9</button>
+<button type="button" onclick="myNumKey(',')">,</button><button type="button" onclick="myNumKey('0')">0</button><button type="button" onclick="myNumKey('del')">⌫</button>
+</div></div></div></body></html>

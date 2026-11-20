@@ -1,0 +1,20 @@
+workflows:
+  ios-check:
+    name: MyGym iOS — проверка сборки
+    max_build_duration: 30
+    instance_type: mac_mini_m2
+    environment:
+      xcode: latest
+    scripts:
+      - name: Установить XcodeGen
+        script: |
+          brew install xcodegen
+      - name: Сгенерировать Xcode-проект
+        script: |
+          xcodegen generate
+      - name: Собрать для симулятора без подписи
+        script: |
+          xcodebuild -project MyGym.xcodeproj -scheme MyGym -configuration Debug -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO build
+    artifacts:
+      - ~/Library/Developer/Xcode/DerivedData/**/Build/Products/Debug-iphonesimulator/*.app
+      - /tmp/xcodebuild_logs/*.log
