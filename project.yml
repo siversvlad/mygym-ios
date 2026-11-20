@@ -17,6 +17,6 @@ targets:
         CFBundleDisplayName: MyGym
         NSBluetoothAlwaysUsageDescription: "MyGym использует Bluetooth для подключения пульсометра и расчёта калорий после тренировки."
         CFBundleShortVersionString: '6.17'
-        CFBundleVersion: '1'
+        CFBundleVersion: '2'
         UILaunchScreen: {}
         UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
