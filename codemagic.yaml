@@ -18,3 +18,31 @@ workflows:
     artifacts:
       - ~/Library/Developer/Xcode/DerivedData/**/Build/Products/Debug-iphonesimulator/*.app
       - /tmp/xcodebuild_logs/*.log
+
+  ios-device-ipa:
+    name: MyGym iOS — IPA для AltStore
+    max_build_duration: 30
+    instance_type: mac_mini_m2
+    environment:
+      xcode: latest
+    scripts:
+      - name: Установить XcodeGen
+        script: |
+          brew install xcodegen
+      - name: Сгенерировать Xcode-проект
+        script: |
+          xcodegen generate
+      - name: Собрать для iPhone без подписи
+        script: |
+          set -e
+          xcodebuild -project MyGym.xcodeproj -scheme MyGym -configuration Release -sdk iphoneos -destination 'generic/platform=iOS' -derivedDataPath "$CM_BUILD_DIR/DerivedData" CODE_SIGNING_ALLOWED=NO build
+      - name: Упаковать неподписанный IPA
+        script: |
+          set -e
+          mkdir -p "$CM_BUILD_DIR/ipa/Payload"
+          cp -R "$CM_BUILD_DIR/DerivedData/Build/Products/Release-iphoneos/MyGym.app" "$CM_BUILD_DIR/ipa/Payload/"
+          cd "$CM_BUILD_DIR/ipa"
+          zip -qr "$CM_BUILD_DIR/MyGym-unsigned.ipa" Payload
+    artifacts:
+      - MyGym-unsigned.ipa
+      - /tmp/xcodebuild_logs/*.log
