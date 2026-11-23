@@ -283,7 +283,40 @@ function repeatHistory(i){
 }
 function loadProfile(){let p=state.profile;for(let [id,k] of [['pname','name'],['psex','sex'],['page','age'],['pheight','height'],['pweight','weight'],['pintensity','intensity']])document.getElementById(id).value=p[k]??(k==='intensity'?'4':'')}
 function saveProfile(){state.profile={name:document.getElementById('pname').value,sex:document.getElementById('psex').value,age:document.getElementById('page').value,height:document.getElementById('pheight').value,weight:document.getElementById('pweight').value,intensity:document.getElementById('pintensity').value};save();alert('Профиль сохранён')}
-function exportBackup(){let blob=new Blob([JSON.stringify({...state,backupVersion:5},null,2)],{type:'application/json'});let a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='mygym-backup-v5.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),2000)}
+async function exportBackup() {
+  const filename = 'mygym-backup-v5.json';
+  const json = JSON.stringify(
+    {...state, backupVersion: 5}, null, 2
+  );
+  const file = new File(
+    [json], filename,
+    {type: 'application/json'}
+  );
+
+  try {
+    if (navigator.canShare?.({files: [file]}) &&
+        navigator.share) {
+      await navigator.share({files: [file]});
+      return;
+    }
+
+    const blob = new Blob(
+      [json], {type: 'application/json'}
+    );
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 10000);
+  } catch (err) {
+    if (err.name !== 'AbortError') {
+      alert('Не удалось сохранить JSON: ' + err.message);
+    }
+  }
+}
 function importBackup(ev){let file=ev.target.files[0];if(!file)return;file.text().then(s=>{let d=JSON.parse(s);if(!Array.isArray(d.ex)||!Array.isArray(d.history))throw Error('Неверный формат');if(!confirm('Заменить текущие данные резервной копией?'))return;state={ex:d.ex.map(e=>({...e,phase:e.phase||'main',kind:e.kind||'strength'})),history:d.history,favorites:d.favorites||[],custom:d.custom||[],customKinds:d.customKinds||{},profile:d.profile||{},startedAt:null,elapsed:0};save();renderWorkout();renderHistory();renderLibrary();renderControls();alert('Данные восстановлены')}).catch(e=>alert('Не удалось импортировать: '+e.message));ev.target.value=''}
 renderWorkout();renderControls();tick();
 
